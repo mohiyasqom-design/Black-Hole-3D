@@ -1,5 +1,5 @@
-// Procedural Earth: continents, oceans with specular glint, ice caps, clouds,
-// atmosphere, night-side city lights and tidal deformation. No textures.
+// Hybrid Earth: NASA Blue Marble surface texture blended with procedural
+// clouds, atmosphere, night-side lights and tidal deformation.
 // Lit by the accretion disk: the day side always faces the black hole.
 import { NOISE } from './common.glsl.js';
 
@@ -47,6 +47,8 @@ export const EARTH_FRAG = /* glsl */ `
 // EARTH_SURFACE
 uniform vec3 uLightDir;
 uniform vec3 uLightCol;
+uniform sampler2D uEarthMap;
+uniform float uEarthMapReady;
 uniform float uLightI;
 uniform float uVisibility;
 uniform float uStress;
@@ -71,8 +73,16 @@ void main() {
   vec3 landCol = mix(vec3(0.045, 0.085, 0.035), vec3(0.30, 0.24, 0.14), dry);
   landCol = mix(landCol, vec3(0.13, 0.11, 0.09), smoothstep(0.6, 0.72, e));
   vec3 ocean = mix(vec3(0.004, 0.014, 0.045), vec3(0.01, 0.05, 0.10), smoothstep(0.42, 0.515, e));
-  vec3 albedo = mix(ocean, landCol, land);
-  albedo = mix(albedo, vec3(0.75, 0.8, 0.85), ice);
+  vec3 proceduralAlbedo = mix(ocean, landCol, land);
+  proceduralAlbedo = mix(proceduralAlbedo, vec3(0.75, 0.8, 0.85), ice);
+
+  // Equirectangular Earth map. Keep a small procedural contribution so the
+  // existing tidal/thermal styling remains visible instead of replacing it.
+  float lon = atan(n.z, n.x) / 6.28318530718 + 0.5;
+  float latMap = asin(clamp(n.y, -1.0, 1.0)) / 3.14159265359 + 0.5;
+  vec3 textureAlbedo = texture2D(uEarthMap, vec2(lon, latMap)).rgb;
+  vec3 albedo = mix(proceduralAlbedo, textureAlbedo, 0.86 * uEarthMapReady);
+  albedo = mix(albedo, vec3(0.75, 0.8, 0.85), ice * 0.35);
 
   float ndl = dot(N, L);
   float day = smoothstep(-0.12, 0.22, ndl);

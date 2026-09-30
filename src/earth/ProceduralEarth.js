@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { EARTH_VERT, EARTH_FRAG, CLOUD_FRAG, ATMO_FRAG } from '../shaders/earth.glsl.js';
 import { additiveKeepAlpha } from '../blackhole/Jets.js';
 
+const EARTH_TEXTURE_URL = '/textures/earth/earth_surface.jpg';
+
 /**
  * Earth made from three shader layers on shared tidal-deformation uniforms.
  * Interface shared with GLBEarth: object, update(state), setVisible(), dispose().
@@ -10,6 +12,27 @@ export class ProceduralEarth {
   constructor(segments = [96, 64]) {
     this.kind = 'procedural';
     this.object = new THREE.Group();
+    this.textureLoader = new THREE.TextureLoader();
+    this.earthTexture = new THREE.Texture();
+    this.earthTexture.colorSpace = THREE.SRGBColorSpace;
+    this.earthTextureReady = false;
+    this.textureLoader.load(
+      EARTH_TEXTURE_URL,
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        texture.anisotropy = 4;
+        this.earthTexture.dispose();
+        this.earthTexture = texture;
+        this.earthTextureReady = true;
+        this.shared.uEarthMap.value = texture;
+        this.shared.uEarthMapReady.value = 1;
+      },
+      undefined,
+      (error) => {
+        console.warn('[BHL] Earth texture unavailable; using procedural surface.', error);
+      }
+    );
+
     this.shared = {
       uAxis: { value: new THREE.Vector3(1, 0, 0) },
       uStretch: { value: 0 },
@@ -20,6 +43,8 @@ export class ProceduralEarth {
       uVisibility: { value: 1 },
       uAppear: { value: 1 },
       uTime: { value: 0 },
+      uEarthMap: { value: this.earthTexture },
+      uEarthMapReady: { value: 0 },
     };
     const mk = (frag, lag, crack, extra = {}) =>
       new THREE.ShaderMaterial({
@@ -70,5 +95,6 @@ export class ProceduralEarth {
       o.geometry?.dispose();
       o.material?.dispose();
     });
+    this.earthTexture?.dispose?.();
   }
 }

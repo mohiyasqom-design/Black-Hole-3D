@@ -27,13 +27,23 @@ class SimpleEarth {
 /** Asset abstraction: prefer the Blender GLB when present, otherwise procedural. */
 export function createEarthVisual(registry, tier, broken = false) {
   if (broken) return new SimpleEarth();
+  // Keep the procedural Earth as the primary renderer so the real surface
+  // texture is combined with our existing clouds, atmosphere, city lights
+  // and tidal-deformation effects. The Blender GLB remains available as a
+  // fallback for future asset variants.
+  try {
+    return new ProceduralEarth(tier.earthSeg);
+  } catch (e) {
+    console.warn('[BHL] procedural Earth unusable, trying earth.glb', e);
+  }
+
   const model = registry?.get('earth');
   if (model) {
     try {
       return new GLBEarth(model.clone(true));
     } catch (e) {
-      console.warn('[BHL] earth.glb unusable, using procedural Earth', e);
+      console.warn('[BHL] earth.glb unusable, using simple Earth', e);
     }
   }
-  return new ProceduralEarth(tier.earthSeg);
+  return new SimpleEarth();
 }
