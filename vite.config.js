@@ -14,7 +14,7 @@ export default defineConfig({
   preview: {
     host: true,
     port: 4173,
-    allowedHosts: ['black-hole-3d.up.railway.app'],
+    allowedHosts: ['blackhole-3d-pwacademy.up.railway.app'],
   },
 
   build: {
