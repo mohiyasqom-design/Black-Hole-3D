@@ -29,7 +29,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg xvfb
 
       - name: Build
         run: npm run build
@@ -43,7 +43,7 @@ jobs:
       - name: Record 1080p Showcase
         env:
           DURATION: ${{ github.event.inputs.duration }}
-        run: node scripts/record-showcase.mjs
+        run: xvfb-run -a --server-args='-screen 0 1920x1080x24' node scripts/record-showcase.mjs
 
       - name: Upload MP4
         uses: actions/upload-artifact@v4
