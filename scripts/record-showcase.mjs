@@ -1,6 +1,9 @@
-import { chromium } from 'playwright';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
+
+const install = spawnSync('npm', ['install', '--no-save', '--no-package-lock', 'playwright@1.55.0'], { stdio: 'inherit' });
+if (install.status !== 0) process.exit(install.status || 1);
+const { chromium } = await import('playwright');
 
 const duration = Math.max(5, Number(process.env.DURATION || 30));
 await mkdir('artifacts', { recursive: true });
