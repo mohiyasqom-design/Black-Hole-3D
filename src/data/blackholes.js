@@ -1,0 +1,58 @@
+// Each black-hole class changes scale, disk character, orbital tempo, and
+// (through real tidal physics) how Earth behaves near it.
+export const BH_TYPES = {
+  stellar: {
+    id: 'stellar',
+    label: 'Stellar',
+    blurb: 'A few Suns of mass, a horizon the size of a city. Tides shred Earth long before the edge.',
+    rsWorld: 1.0,
+    massScaleExp: 0.2,
+    mass: { min: 3, max: 100, default: 10, log: false, unit: 'M\u2609' },
+    spin: 0.6,
+    diskTemp: 13500,
+    diskExtent: 9,
+    diskThickness: 0.05,
+    diskSpeed: 1.45,
+    diskBright: 0.8,
+    jetPower: 0.8,
+    jetWidth: 0.55,
+    jetLength: 34,
+    orbitTimeScale: 1.35,
+    earthRadius: 0.3,
+    earthDistance: 14,
+    tidalSceneMax: 9,
+    camDist: 24,
+    camPitch: 0.2,
+  },
+  supermassive: {
+    id: 'supermassive',
+    label: 'Supermassive',
+    blurb: 'Millions to billions of Suns. Vast, slow and deceptively gentle at the horizon.',
+    rsWorld: 3.0,
+    massScaleExp: 0.06,
+    mass: { min: 1e6, max: 1e10, default: 4.3e6, log: true, unit: 'M\u2609' },
+    spin: 0.9,
+    diskTemp: 5600,
+    diskExtent: 15,
+    diskThickness: 0.11,
+    diskSpeed: 0.7,
+    diskBright: 0.85,
+    jetPower: 0.55,
+    jetWidth: 1.25,
+    jetLength: 42,
+    orbitTimeScale: 0.7,
+    earthRadius: 0.55,
+    earthDistance: 12,
+    tidalSceneMax: 8,
+    camDist: 28,
+    camPitch: 0.13,
+  },
+};
+
+export const VIZ_MODES = [
+  { id: 0, key: 'cinematic', label: 'Cinematic' },
+  { id: 1, key: 'thermal', label: 'Thermal' },
+  { id: 2, key: 'doppler', label: 'Doppler' },
+  { id: 3, key: 'lensing', label: 'Lensing' },
+];
+export const EHT_MODE = 4;

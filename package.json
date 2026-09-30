@@ -1,0 +1,23 @@
+{
+  "name": "black-hole-laboratory",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Black Hole Laboratory: an interactive, physically inspired gravity experience for the browser.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "check": "node scripts/check-project.mjs",
+    "generate:assets": "node scripts/generate-assets.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.185.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
+  }
+}

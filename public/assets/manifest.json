@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "note": "Optional high-detail assets produced by blender/generate_all.py. Set enabled:true after copying the GLB files into public/assets/models/. The app falls back to procedural assets when a file is disabled, missing or broken.",
+  "assets": {
+    "earth":      { "enabled": false, "url": "models/earth.glb" },
+    "spacecraft": { "enabled": false, "url": "models/spacecraft.glb" },
+    "debris":     { "enabled": false, "url": "models/debris.glb" },
+    "station":    { "enabled": false, "url": "models/station.glb" }
+  }
+}
