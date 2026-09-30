@@ -6,7 +6,7 @@ const duration = Math.max(5, Number(process.env.DURATION || 30));
 await mkdir('artifacts', { recursive: true });
 
 const browser = await chromium.launch({
-  headless: true,
+  headless: false,
   args: [
     '--use-gl=angle',
     '--use-angle=swiftshader',
