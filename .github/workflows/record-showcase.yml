@@ -25,7 +25,10 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --include=dev
+
+      - name: Verify recorder dependencies
+        run: node -e "console.log(require.resolve('playwright')); console.log(require.resolve('wait-on'))"
 
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
