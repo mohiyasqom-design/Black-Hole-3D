@@ -1,0 +1,54 @@
+name: Record Showcase
+
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: "Recording duration in seconds"
+        required: false
+        default: "30"
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Build
+        run: npm run build
+
+      - name: Start preview server
+        run: npm run preview -- --host 0.0.0.0 --port 4173 > /tmp/bhl-server.log 2>&1 &
+
+      - name: Wait for server
+        run: npx wait-on http://127.0.0.1:4173
+
+      - name: Record 1080p Showcase
+        env:
+          DURATION: ${{ github.event.inputs.duration }}
+        run: node scripts/record-showcase.mjs
+
+      - name: Upload MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: black-hole-showcase-1080p
+          path: artifacts/black-hole-showcase-1080p.mp4
+          if-no-files-found: error
+          retention-days: 7
